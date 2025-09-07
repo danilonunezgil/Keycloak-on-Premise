@@ -21,7 +21,7 @@ services:
     build: .
     container_name: keycloak
     environment:
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: ${KC_HOSTNAME}
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
       KC_HOSTNAME_STRICT: false
@@ -31,17 +31,20 @@ services:
       KC_DB_PASSWORD: ${KC_DB_PASSWORD}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB_URL: 'jdbc:postgresql://postgres/keycloak'
+      KC_DB_URL: ${KC_DB_URL}
     command:
       - "start"
       - "--optimized"
       - "--verbose"
+      - "--import-realm"
     ports:
       - "8443:8443"
       - "8080:8080"
     depends_on:
       - postgres
     restart: unless-stopped
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
     networks:
       - local-keycloak
 
